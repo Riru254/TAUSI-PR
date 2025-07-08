@@ -40,6 +40,9 @@ def booking_view(request):
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
+            booking = form.save(commit=False)
+            booking.user = request.user  # 🔥 This links the booking to the logged-in user
+            booking.save()
             form.save()
             messages.success(request, "Your booking was successfully submitted!")
             return redirect('booking')  # Adjust if your booking page has a different name

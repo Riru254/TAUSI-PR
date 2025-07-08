@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib import messages
 from accounts.models import CustomUser
 from .forms import LoginForm,CustomRegisterForm
 from django.contrib.auth import logout
+from mainapp.models import Booking
 
 def tausi_logout_view(request):
     print("LOGOUT VIEW HIT")
@@ -45,3 +47,12 @@ def register_view(request):
             login(request, user)
             return redirect('homepage')
     return render(request, 'register.html', {'form': form})
+
+@login_required
+def dashboard_view(request):
+    user = request.user
+    bookings = Booking.objects.filter(user=user)
+    return render(request, 'accounts/dashboard.html', {
+        'user': user,
+        'bookings': bookings,
+    })

@@ -1,0 +1,46 @@
+<div class="container mt-5">
+  <h2 class="text-center">Welcome, {{ user.first_name }} 🧳</h2>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h4>Your Info</h4>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>Nationality:</strong> {{ user.nationality }}</p>
+      <a href="{% url 'edit_profile' %}" class="btn btn-warning">Edit Profile</a>
+      <a href="{% url 'delete_account' %}" class="btn btn-outline-danger ms-2">Delete Account</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h4>Your Bookings</h4>
+      {% if bookings %}
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for booking in bookings %}
+              <tr>
+                <td>{{ booking.package.name }}</td>
+                <td>{{ booking.date }}</td>
+                <td>{{ booking.status }}</td>
+                <td>
+                  <a href="{% url 'edit_booking' booking.id %}" class="btn btn-sm btn-primary">Edit</a>
+                  <a href="{% url 'delete_booking' booking.id %}" class="btn btn-sm btn-danger">Cancel</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No bookings yet. Ready for your next adventure?</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

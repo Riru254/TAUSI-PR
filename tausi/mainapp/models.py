@@ -9,7 +9,7 @@ class Booking(models.Model):
         ('Nairobi City Experience', 'Nairobi City Experience'),
         ('Amboseli Adventure', 'Amboseli Adventure'),
     ]
-
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null= True, blank= True)
     name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=20)
