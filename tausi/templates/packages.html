@@ -1,0 +1,460 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour packages - Tausi</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="icon" href="{% static 'images/logo-removebg.ico' %}" type="image/ico">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        .text-teal{
+            color: #20c997;
+        }
+        .bg-abstract {
+            background: url('{% static 'images/contactwallpaper.png' %}') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed; /* optional parallax-like */
+        }
+            .overlay-content {
+        position: relative;
+        z-index: 1;
+        color: white;
+        text-align: center;
+        font-size: 2rem;
+        backdrop-filter: blur(2px);
+            }
+       .overlay-text {
+        position: relative;
+        z-index: 1;
+        color: rgb(10, 74, 48);
+        text-align: center;
+        font-size: 1rem;
+        backdrop-filter: blur(7px);
+          }
+        .bdrop{
+            backdrop-filter: blur(1px);
+            color: black;
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'homepage' %}">
+            <img src="{% static 'images/logo-removebg.png' %}" alt="Logo" width="40"> Tausi Travels and Tours
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link " href="{% url 'homepage' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'packages' %}">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center ms-3 m-3">
+                    <!-- Auth badge -->
+                    <span class="badge rounded-pill"
+                            style="cursor: pointer; background-color: {% if user.is_authenticated %}#20c997{% else %}gray{% endif %};"
+                            data-bs-toggle="modal"
+                            data-bs-target="#authModal">
+                            <i class="bi bi-person-fill"></i>
+                    {% if user.is_authenticated %}
+                        {{ user.username }}
+                    {% else %}
+                        Guest
+                    {% endif %}
+                    </span>
+              </div>
+        </div>
+    </div>
+    </nav>
+    <section class="py-5 bg-abstract">
+    <div class="container ">
+        <h2 class="text-center mb-5 bdrop">Our Tour Packages</h2>
+        <div class="row g-4 ">
+
+            <!-- Package 1 -->
+            <div class="col-md-4">
+              <div class="card shadow-sm h-100">
+                <img src="{% static 'images/safari.png' %}" class="card-img-top" alt="Luxury Safari">
+                <div class="card-body">
+                  <h5 class="card-title text-success">Luxury Safari</h5>
+                  <p class="card-text">5 days in Maasai Mara with luxury tented camps, game drives, and bush dinners.</p>
+                  <p class="fw-bold text-success">KES 22,500</p>
+                  <a href="#" class="btn text-white" style="background-color: #28a745;" data-bs-toggle="modal" data-bs-target="#modalSafari">View Details</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Package 2 -->
+            <div class="col-md-4">
+              <div class="card shadow-sm h-100">
+                <img src="{% static 'images/coast.png' %}" class="card-img-top" alt="Coastal Escape">
+                <div class="card-body">
+                  <h5 class="card-title text-success">Coastal Escape</h5>
+                  <p class="card-text">3 nights in Diani or Watamu, beach resort stay, snorkeling, and sunset cruise.</p>
+                  <p class="fw-bold text-success">KES 17,500</p>
+                  <a href="#" class="btn text-white" style="background-color: #28a745;" data-bs-toggle="modal" data-bs-target="#modalCoast">View Details</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Package 3 -->
+            <div class="col-md-4">
+              <div class="card shadow-sm h-100">
+                <img src="{% static 'images/mtkenya.png' %}" class="card-img-top" alt="Mount Kenya Trek">
+                <div class="card-body">
+                  <h5 class="card-title text-success">Mount Kenya Trek</h5>
+                  <p class="card-text">4-day guided trek to Point Lenana, inclusive of gear, meals, and permits.</p>
+                  <p class="fw-bold text-success">KES 12,500</p>
+                  <a href="#" class="btn text-white" style="background-color: #28a745;" data-bs-toggle="modal" data-bs-target="#modalMtKenya">View Details</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Package 4 -->
+            <div class="col-md-4">
+              <div class="card shadow-sm h-100">
+                <img src="{% static 'images/nairobi.png' %}" class="card-img-top" alt="Nairobi City Tour">
+                <div class="card-body">
+                  <h5 class="card-title text-success">Nairobi City Experience</h5>
+                  <p class="card-text">1-day guided tour including Giraffe Centre, Karen Blixen Museum, and local cuisine tasting.</p>
+                  <p class="fw-bold text-success">KES 7,500</p>
+                  <a href="#" class="btn text-white" style="background-color: #28a745;" data-bs-toggle="modal" data-bs-target="#modalNairobi">View Details</a>
+                </div>
+              </div>
+              </div>
+          
+            
+              <!-- Package 5 -->
+            <div class="col-md-4">
+              <div class="card shadow-sm h-100">
+                <img src="{% static 'images/amboseli.png' %}" class="card-img-top" alt="Amboseli Adventure">
+                <div class="card-body">
+                  <h5 class="card-title text-success">Amboseli Adventure</h5>
+                  <p class="card-text">3-day safari with Kilimanjaro views, game drives, and Maasai village visit.</p>
+                  <p class="fw-bold text-success">KES 35,000</p>
+                  <a href="#" class="btn text-white" style="background-color: #28a745;" data-bs-toggle="modal" data-bs-target="#modalAmboseli">View Details</a>
+                </div>
+              </div>
+            </div>
+
+
+    </div>
+  </div>
+</section>
+
+<footer class="bg-abstract text-white"  >
+      <div class="container-fluid py-4 overlay-text">
+        <div class="row">
+          <div class="col-md-3 mt-4" style="margin-left: 3%;">
+                <img src="{% static 'images/logo-removebg.png' %}" alt="tausitoursandtravels logo" class="img-fluid" style="max-width: 120px; height: auto;">
+                <h3 style="font-family:'Outfit', sans-serif; text-shadow: 2px 2px 6px rgba(0,0,0,0.45);">Beyond Travel — A Signature Experience.</h3>
+            </div>
+          <div class="col-md-4">
+            <h5>Quick Links</h5>
+            <ul class="list-unstyled">
+              <li><a href="{% url 'homepage' %}" class="text-white text-decoration-none">Home</a></li>
+              <li><a href="{% url 'packages' %}" class="text-white text-decoration-none">Packages</a></li>
+              <li><a href="{% url 'about' %}" class="text-white text-decoration-none">About</a></li>
+              <li><a href="{% url 'contact' %}" class="text-white text-decoration-none">Contact</a></li>
+            </ul>
+            <h5>Our Partners</h5>
+            <ul class="list-unstyled">
+              <li><a href="https://langatvic.github.io/HospitalProject/" class="text-white text-decoration-none" target =" _blank"><strong>Medicare</strong></a></li>
+              <li><a href="https://open.spotify.com/" class="text-white text-decoration-none" target =" _blank"><strong>Spotify Music</strong></a></li>
+              <li><a href="https://www.dhl.com/us-en/home.html" class="text-white text-decoration-none" target =" _blank"><strong>DHL logistics</strong></a></li>
+              <li><a href="https://auto-xpress.co.ke/" class="text-white text-decoration-none" target =" _blank"><strong>Auto-xpress</strong> </a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5>Contact Us</h5>
+            <p>Email: info@tausi.co.ke</p>
+            <p>Phone: +254 712 345678</p>
+            <div>
+              <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="text-white"><i class="bi bi-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        <hr class="border-white">
+        <p class="text-center mb-0">© {{ year }} Tausi Travels and Tours. All rights reserved.</p>
+      </div>
+    </footer>
+
+
+<div class="modal fade" id="modalSafari" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Luxury Safari in Maasai Mara: An Unparalleled Wilderness Experience</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+         <div id="photoStrip1" class="carousel slide" data-bs-ride="carousel">
+          <div class="image-strip d-flex overflow-auto gap-3 mb-3 px-2">
+            <img src="{% static 'images/masaimara-accomodation.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/Masai-mara-Safari.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/masai-mara-culture.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/hot-air-baloon.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+          </div>
+          </div>
+
+         <br>
+        <p><strong>Location:</strong> Maasai Mara</p>
+        <p><strong>Duration:</strong> 5 Days, 4 Nights</p>
+        <p><strong>Includes:</strong> Luxury tented camps, daily game drives, bush dinners, park fees, transport.</p>
+        <p>Step into a world of untamed beauty and opulence with a luxury safari in the legendary Maasai Mara, where the golden savannahs meet indulgent comfort. This premier safari destination, globally renowned for its Big Five encounters and the breathtaking Great Migration, offers an exquisite blend of adventure and tranquility <br>
+          <strong> Exclusive Safari Accommodations </strong> <br>
+          Stay in private, lavish tented camps or safari lodges, where elegance meets the wild. Experience spacious suites with panoramic views, personal butler services, and private decks overlooking game-rich plains. Whether it's a luxury tent nestled along the Mara River or a secluded lodge with infinity pools, every detail is crafted for absolute comfort.<br>
+          <strong>Personalized Game Drives & Wildlife Encounters</strong> <br>
+          Embark on custom-tailored game drives in open 4x4 vehicles, guided by expert safari guides who reveal the secrets of the Mara. Witness majestic lions, elusive leopards, massive elephants, and sprawling wildebeest herds, with exclusive access to prime wildlife viewing locations. For a deeper connection to nature, opt for guided bush walks led by Maasai warriors, immersing yourself in the rhythms of the land. <br>
+          <strong>Sunset Sundowners & Fine Dining in the Wild </strong> <br>
+          As the sun dips beyond the horizon, luxury sundowners await at scenic vantage points, where champagne meets a mesmerizing sunset backdrop. Dine under the African stars with gourmet bush dinners, expertly prepared by private chefs. Each meal celebrates authentic Kenyan flavors, served in breathtaking settings—from lantern-lit riverbanks to cozy campfire gatherings.<br>
+          <strong>Hot Air Balloon Safaris: A Bird’s-Eye View of Paradise</strong> <br>
+          Take your luxury safari experience to new heights with a hot air balloon safari, drifting silently over the endless plains as the morning sun paints the landscape in hues of gold. Witness herds of grazing wildlife from above, followed by a champagne breakfast in the bush, making for an unforgettable adventure.<br>
+          <strong>Cultural Immersion & Exclusive Experiences</strong> <br>
+          Beyond wildlife, the Maasai Mara offers deep cultural connections. Engage in authentic Maasai village visits, where you’ll learn about traditions, customs, and the art of survival in the savannah. Indulge in private spa treatments inspired by African wellness rituals, ensuring relaxation after thrilling game drives.
+
+        </p>
+
+        <!-- Embedded video -->
+        <div class="ratio ratio-16x9 mb-3">
+          <iframe width="1047" height="589" src="https://www.youtube.com/embed/Y2EwTrsCD64" title="Is a Masai Mara Safari Worth the Hype? (Honest Opinion)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+
+        <a href="{% url 'booking' %}" class="btn btn-success">Book This Tour</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalCoast" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Luxury Coastal Escape: Serenity, Adventure & Unmatched Elegance</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="photoStrip2" class="carousel slide" data-bs-ride="carousel">
+          <div class="image-strip d-flex overflow-auto gap-3 mb-3 px-2">
+            <img src="{% static 'images/watamu-culture.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/watamu-villa.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/watamu-cuisine.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/watamu-beach.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            
+          </div>
+          </div>
+          <br>
+        <p><strong>Location:</strong> Watamu</p>
+        <p><strong>Duration:</strong> 4 Days, 3 Nights</p>
+        <p><strong>Includes:</strong> Transport, beach fees, luxurious accommodations, seaside experiences and so much more</p>
+        <p>Imagine waking up to the rhythmic sounds of gentle waves, the scent of the ocean breeze, and the golden glow of the rising sun over the horizon. A luxury coastal escape to Kenya’s pristine shores is the perfect blend of relaxation, indulgence, and adventure, designed for those who seek a seamless fusion of tranquility and world-class hospitality. <br>
+        <strong>Exclusive Beachfront Resorts & Private Villas</strong> <br>
+        Indulge in exquisite oceanfront accommodations, where luxury meets breathtaking scenery. Stay in private villas, high-end resorts, or boutique coastal retreats, each offering unrivaled views of the Indian Ocean. Whether it’s an overwater suite, a secluded beachfront bungalow, or a cliffside haven, every detail is designed for ultimate comfort and privacy.
+        <strong>Unparalleled Seaside Experiences</strong><br>
+        Embrace the magic of the Kenyan coastline with a host of curated ocean adventures. <br>
+        <strong>World-Class Dining & Ocean-Inspired Cuisine</strong>
+        Savor an unforgettable culinary journey, featuring fresh, locally sourced seafood and gourmet coastal delicacies. Whether it's a private candlelit dinner on the beach, an open-air seafood grill, or a five-star dining experience, each meal reflects the richness of Swahili and international flavors. <br>
+        <strong>Spa Retreats & Wellness Escapes</strong><br>
+        Unwind with holistic wellness treatments set against the calming backdrop of the ocean. From ocean-facing massage pavilions to rejuvenating yoga sessions on the sand, indulge in relaxation rituals that soothe the soul. <br>
+        <strong>Cultural Encounters & Timeless Traditions</strong><br>
+        Dive into the rich heritage of Kenya’s coastal communities, from exploring historic sites in Old Town Mombasa to discovering the centuries-old traditions of the Swahili culture. Visit local markets, stroll through ancient fortresses, and witness the rhythmic Swahili dances that bring the coastline to life.
+        </p>
+        <!-- Embedded video -->
+        <div class="ratio ratio-16x9 mb-3">
+          <iframe width="704" height="396" src="https://www.youtube.com/embed/B7Ee0lUVPco" title="Watamu beach Kenya (Top Things To Do)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+
+        <a href="{% url 'booking' %}" class="btn btn-success">Book This Tour</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalMtKenya" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Mount Kenya Escape: Where Majesty Meets Tranquility</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="photoStrip3" class="carousel slide" data-bs-ride="carousel">
+          <div class="image-strip d-flex overflow-auto gap-3 mb-3 px-2">
+            <img src="{% static 'images/mtkenya-wildlife.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/mtkenya-culture.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/mtkenya-view.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/mtkenya-trk.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/mtkenya-tent.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/mtkenya-lodges.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            
+          </div>
+          </div>
+        <p><strong>Location:</strong> Mt Kenya</p>
+        <p><strong>Duration:</strong> 4 Days, 3 Nights</p>
+        <p><strong>Includes:</strong> Accommodations, daily game drives, park fees, transport and so much more</p>
+        <p>
+          Rising above the clouds at 5,199 meters, Mount Kenya is more than just Africa’s second-highest peak—it’s a realm of mystique, beauty, and serenity. A luxury escape here offers a rare blend of high-altitude adventure, lush forest retreats, and indulgent comfort, all set against the dramatic backdrop of snow-capped peaks and ancient glaciers.<br>
+          <strong>Elegant Lodges & Mountain Retreats</strong> <br>
+          Stay at exclusive lodges nestled in the foothills, such as the iconic Fairmont Mount Kenya Safari Club, where manicured gardens meet panoramic mountain views. Enjoy fireplace suites, gourmet dining, and spa treatments, all while surrounded by the pristine wilderness of Mount Kenya National Park. <br>
+          <strong>Tailored Treks & Scenic Excursions</strong> <br>
+          Whether you're up for a gentle nature walk or a multi-day summit attempt, your experience is fully customizable. Trek through bamboo forests, alpine meadows, and glacial valleys, guided by expert mountaineers and naturalists. For a more relaxed pace, opt for day hikes to Lake Ellis or the Sirimon Trail, with gourmet picnic lunches en route. <br>
+          <strong>Wildlife & Conservation Encounters</strong> <br>
+          Mount Kenya’s ecosystem is teeming with life. Spot colobus monkeys, forest elephants, and rare bird species, or visit the Mount Kenya Animal Orphanage for a heartwarming conservation experience. Nearby conservancies like Ol Pejeta offer opportunities to see the Big Five in a more traditional safari setting. <br>
+          <strong>Wellness & Rejuvenation in the Highlands</strong> <br>
+          After a day of exploration, unwind with spa treatments inspired by African botanicals, or enjoy a sunset yoga session overlooking the mountain. The crisp air and serene surroundings make Mount Kenya a perfect place to reset and reconnect. <br>
+          <strong>Cultural Touchpoints & Local Flavor</strong>  <br>
+          Engage with the Kikuyu and Meru communities, whose traditions are deeply tied to the mountain. Enjoy farm-to-table cuisine, storytelling by the fire, and handcrafted souvenirs that reflect the spirit of the region. <br>
+
+        </p>
+
+        <!-- Embedded video -->
+        <div class="ratio ratio-16x9 mb-3">
+          <iframe width="704" height="396" src="https://www.youtube.com/embed/b_2aAxXq0hg" title="Haglöfs  I  The Mount Kenya" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+
+        <a href="{% url 'booking' %}" class="btn btn-success">Book This Tour</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalNairobi" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Luxury Nairobi Experience: Where Urban Chic Meets African Soul</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="photoStrip4" class="carousel slide" data-bs-ride="carousel">
+          <div class="image-strip d-flex overflow-auto gap-3 mb-3 px-2">
+            <img src="{% static 'images/nairobi-park.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/nairobi-view.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/nairobi-karen.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/nairobi-retreat.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            
+          </div>
+          </div>
+        <p><strong>Location:</strong> Nairobi</p>
+        <p><strong>Duration:</strong> 1 Day</p>
+        <p><strong>Includes:</strong> A symphony of contrasts</p>
+        <p>
+          Welcome to Nairobi, East Africa’s vibrant capital, where cosmopolitan flair dances with untamed wilderness. A luxury experience here is not just about five-star indulgence—it’s about discovering the heartbeat of Kenya through curated moments of elegance, culture, and adventure. <br>
+          <strong>Elegant Urban Retreats</strong> <br>
+          Stay in boutique hotels and luxury villas nestled in Nairobi’s lush suburbs or perched high above the city skyline. Whether it’s the iconic Giraffe Manor, the serene Hemingways Nairobi, or a private villa along Riverside Drive, expect personalized service, gourmet dining, and tranquil gardens just minutes from the city’s pulse. <br>
+          <strong>Wild Encounters in the City</strong> <br>
+          Only in Nairobi can you sip your morning espresso and then head out for a game drive in Nairobi National Park, where lions, rhinos, and giraffes roam against a backdrop of skyscrapers. Visit the David Sheldrick Wildlife Trust to meet orphaned elephants or feed endangered Rothschild giraffes at the Giraffe Centre—all within city limits. <br>
+          <strong>Cultural Immersion & Artful Living</strong> <br>
+          Explore the Karen Blixen Museum, home of the “Out of Africa” legend, or dive into Nairobi’s thriving art scene at Circle Art Gallery and The Art Space. For a deeper connection, enjoy a private Maasai cultural experience or a guided walking tour led by locals who share the city’s untold stories. <br>
+          <strong>Gastronomic Journeys</strong> <br>
+          Dine in style at Nairobi’s top culinary destinations like INTI – A Nikkei Experience, where Japanese-Peruvian fusion meets panoramic city views. From rooftop lounges to hidden garden cafés, Nairobi’s food scene is a celebration of global flavors and local ingredients. <br>
+          <strong>Nature & Wellness Escapes</strong> <br>
+          Unwind in the Karura Forest Reserve, a green sanctuary perfect for forest walks, bike rides, or yoga under the canopy. Or indulge in a spa day at a luxury wellness retreat, where African botanicals and modern therapies restore body and soul. <br>
+
+
+        </p>
+        <!-- Embedded video -->
+        <div class="ratio ratio-16x9 mb-3">
+         <iframe width="704" height="396" src="https://www.youtube.com/embed/tPBmrNrUi6g" title="TOP 10 Things to do in Nairobi, Kenya 2023!" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> 
+        </div>
+
+        <a href="{% url 'booking' %}" class="btn btn-success">Book This Tour</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalAmboseli" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"> Amboseli: Where Giants Roam Beneath Kilimanjaro</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+         <div id="photoStrip5" class="carousel slide" data-bs-ride="carousel">
+          <div class="image-strip d-flex overflow-auto gap-3 mb-3 px-2">
+            <img src="{% static 'images/amboseli-view.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/amboseli-lodges.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/amboseli-culture.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/amboseli-wildlife.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            <img src="{% static 'images/amboseli-safari.jpg' %}" class="img-thumbnail flex-shrink-0" style="width: 300px; height: 200px; object-fit: cover;">
+            
+          </div>
+        <p><strong>Location:</strong> Amboseli National Park</p>
+        <p><strong>Duration:</strong> 3 Days, 2 Nights</p>
+        <p><strong>Includes:</strong> Premium accommodations, daily game drives, park fees, transport, spa treatments</p>
+        <p>Set against the awe-inspiring backdrop of Mount Kilimanjaro, Amboseli National Park offers a safari experience like no other. Known for its towering elephant herds, sweeping savannahs, and dramatic skies, this is where raw wilderness meets refined elegance <br>
+          <strong>Premier Safari Lodges & Camps</strong> <br>
+          Stay in world-class accommodations such as Amboseli Serena Safari Lodge, Elewana Tortilis Camp, or Tawi Lodge, each offering a unique blend of comfort and authenticity. Expect panoramic views of Kilimanjaro, private decks, infinity pools, and eco-conscious design—all nestled in the heart of nature. <br>
+          <strong>Unforgettable Wildlife Encounters</strong> <br>
+          Amboseli is famed for its free-roaming elephants, often seen silhouetted against the snow-capped mountain. Enjoy private game drives led by expert guides, where you’ll spot lions, cheetahs, giraffes, and over 400 bird species. For a more intimate experience, opt for guided bush walks or night safaris on nearby conservancies. <br>
+          <strong>Scenic Sundowners & Bush Dining</strong> <br>
+          Toast the sunset with a sundowner cocktail as Kilimanjaro glows in the distance. Then indulge in gourmet bush dinners under the stars, where fine dining meets the sounds of the wild. Many lodges offer open-air restaurants and locally inspired cuisine, blending Swahili flavors with international flair. <br>
+          <strong>Cultural Connections</strong> <br>
+          Immerse yourself in the traditions of the Maasai people, whose ancestral lands surround the park. Visit local villages, witness traditional dances, and learn about their deep connection to the land and wildlife. <br>
+          <strong>Wellness & Relaxation</strong> <br>
+          After a day of adventure, unwind with spa treatments, a dip in a palm-shaded pool, or a quiet moment on your private veranda. The serenity of Amboseli makes it a perfect destination for honeymooners, families, and solo travelers alike. <br>
+           <br>
+           A luxury safari in Amboseli is more than a getaway—it’s a soul-stirring journey into the heart of Africa, where every sunrise brings new wonder and every moment is steeped in beauty.
+          
+        </p>
+
+        <!-- Embedded video -->
+        <div class="ratio ratio-16x9 mb-3">
+        <iframe width="704" height="396" src="https://www.youtube.com/embed/UKZ9SJvJuGg" title="Is Amboseli Kenya Worth Visiting? (Honest Opinions)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+
+        <a href="{% url 'booking' %}" class="btn btn-success">Book This Tour</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="authModalLabel">Welcome to Tausi Tours</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        {% if user.is_authenticated %}
+          <p>You are logged in as <strong>{{ user.username }}</strong>.</p>
+          <a href="{% url 'logout' %}" class="btn btn-outline-danger" onclick = "return confirm('Log out now?')">Logout</a>
+        {% else %}
+          <p>Welcome! What would you like to do?</p>
+          <a href="{% url 'login' %}" class="btn btn-success w-100 mb-2">Log In</a>
+          <a href="{% url 'register' %}" class="btn btn-outline-success w-100">Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

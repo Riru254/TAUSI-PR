@@ -1,0 +1,20 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h2 class="mb-4 text-center">📝 Share Your Story</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="mb-3">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+              <small class="text-danger">{{ field.errors.0 }}</small>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success w-100">Post Blog</button>
+      </form>
+    </div>
+  </div>
+</div>
