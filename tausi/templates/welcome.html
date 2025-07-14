@@ -113,6 +113,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                     </li>
+                    {% if user.is_authenticated %}
+                      <li class="nav-item">
+                        <a class="btn btn-outline-success me-2" href="{% url 'dashboard' %}">Dashboard</a>
+                      </li>
+                    {% endif %}
                 </ul>
                 <div class="d-flex align-items-center ms-3 m-3">
                     <!-- Auth badge -->

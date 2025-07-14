@@ -13,6 +13,12 @@
   <link rel="icon" href="{% static 'images/logo-removebg.ico' %}" type="image/ico">
 
   <style>
+          html, body {
+        height: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
+
         .bg-abstract {
                 background: url("{% static "images/contactwallpaper.png" %}") no-repeat center center;
                 background-size: cover;
@@ -49,9 +55,6 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'welcome' %}"><strong>Welcome</strong></a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'homepage' %}">Home</a>
                     </li>
                     <li class="nav-item">
@@ -63,6 +66,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                     </li>
+                    {% if user.is_authenticated %}
+                      <li class="nav-item">
+                        <a class="btn btn-outline-success me-2" href="{% url 'dashboard' %}">Dashboard</a>
+                      </li>
+                    {% endif %}
                 </ul>
                 <div class="d-flex align-items-center ms-3 m-3">
                     <!-- Auth badge -->

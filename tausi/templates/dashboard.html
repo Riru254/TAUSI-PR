@@ -1,25 +1,134 @@
-<div class="container mt-5">
-  <h2 class="text-center">Welcome, {{ user.first_name }} 🧳</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact us -  Tausi</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="icon" href="{% static 'images/logo-removebg.ico' %}" type="image/ico">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+      html, body {
+      height: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
 
-  <div class="card mb-4">
-    <div class="card-body">
-      <h4>Your Info</h4>
-      <p><strong>Email:</strong> {{ user.email }}</p>
-      <p><strong>Nationality:</strong> {{ user.nationality }}</p>
-      <a href="{% url 'edit_profile' %}" class="btn btn-warning">Edit Profile</a>
-      <a href="{% url 'delete_account' %}" class="btn btn-outline-danger ms-2">Delete Account</a>
+        :root {
+          --accent: #28a745;
+          --dark-accent: rgb(10, 74, 48);
+          --gray: #6c757d;
+        }
+        /* In your <style> or CSS file */
+        .alert {
+          animation: fadeInSlide 0.5s ease-out;
+        }
+
+        @keyframes fadeInSlide {
+          from {
+            opacity: 0;
+            transform: translateX(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        .accent-bg { background-color: var(--accent); }
+        .dark-accent-bg { background-color: var(--dark-accent); }
+        .gray-bg { background-color: var(--gray); }
+        .accent-text { color: var(--accent); }
+        .dark-accent-text { color: var(--dark-accent); }
+        .gray-text { color: var(--gray); }
+        .btn-custom{
+            background-color: #28a745; /* Custom color */
+            color: black; /* Text color */
+            border: none; /* Removes border */
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px; /* Rounded edges */
+          }
+        .bg-abstract {
+        background: url("{% static 'images/contactwallpaper.png' %}") no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed; /* optional parallax-like */
+        }
+        .overlay-content {
+        position: relative;
+        z-index: 1;
+        backdrop-filter: blur(10px);
+            }
+            .overlay-text {
+        position: relative;
+        z-index: 1;
+        color: rgb(10, 74, 48);
+        text-align: center;
+        font-size: 1rem;
+        backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055; max-width: 320px;">
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+</div>
+<div class="container mt-5">
+  <h2 class="text-center">Welcome, {{ user.first_name }} 😎</h2>
+      {% if upcoming %}
+        <h5 class="mt-4 dark-accent-text">Upcoming Tours</h5>
+        {% for booking in upcoming %}
+          <div class="alert alert-info">
+            <strong>{{ booking.package }}</strong> is coming up on <span class="fw-bold text-danger">{{ booking.travel_date }}</span>!
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="alert alert-secondary">You have no upcoming tours.</div>
+      {% endif %}
+
+  <div class="card mb-4 bg-abstract">
+    <div class="card-body overlay-content">
+      <h2 >Dashboard</h2>
+
+      <div class="row align-items-center">
+        <!-- Profile Picture Column -->
+        <div class="col-md-3 col-12 text-center mb-3 mb-md-0">
+          {% if user.profile_pic %}
+            <img src="{{ user.profile_pic.url }}" alt="Profile Picture" class="img-thumbnail" style="width: 150px;">
+          {% else %}
+            <img src="{% static 'images/default.png' %}" alt="Default Profile" class="img-thumbnail" style="width: 150px;">
+          {% endif %}                  
+        </div>
+
+        <!-- User Info Column -->
+        <div class="col-md-9 col-12 ">
+          <p><strong>Username:</strong> {{ user.username }}</p>
+          <p><strong>Name:</strong> {{ user.first_name }} {{user.last_name}}</p>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Nationality:</strong> {{ user.nationality }}</p>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <div class="card">
     <div class="card-body">
       <h4>Your Bookings</h4>
-      {% if bookings %}
         <table class="table table-striped">
-          <thead>
+          <thead class="table-light">
             <tr>
-              <th>Package</th>
-              <th>Date</th>
+              <th>Tour Name</th>
+              <th>Travel Date</th>
+              <th>Booking Date</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -27,20 +136,259 @@
           <tbody>
             {% for booking in bookings %}
               <tr>
-                <td>{{ booking.package.name }}</td>
-                <td>{{ booking.date }}</td>
-                <td>{{ booking.status }}</td>
+                <td>{{ booking.package }}</td>
+                <td>{{ booking.travel_date }}</td>
+                <td>{{ booking.booking_date }}</td>
                 <td>
-                  <a href="{% url 'edit_booking' booking.id %}" class="btn btn-sm btn-primary">Edit</a>
-                  <a href="{% url 'delete_booking' booking.id %}" class="btn btn-sm btn-danger">Cancel</a>
+                  {% if booking.status == 'confirmed' %}
+                    <span class="badge bg-success">Confirmed</span>
+                  {% elif booking.status == 'pending' %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                  {% else %}
+                    <span class="badge bg-danger">Cancelled</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <a href="{% url 'booking_detail' booking.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+
+                  {% if booking.status != 'cancelled' %}
+                    <a href="{% url 'cancel_booking' booking.pk %}" class="btn btn-sm btn-outline-danger"
+                      onclick="return confirm('Cancel this booking?');">
+                      Cancel
+                    </a>
+                  {% else %}
+                    <a href="{% url 'delete_booking' booking.pk %}" class="btn btn-sm btn-outline-danger"
+                      onclick="return confirm('This will permanently delete the booking. Continue?');">
+                      Delete
+                    </a>
+                  {% endif %}
                 </td>
               </tr>
+            {% empty %}
+              <tr><td colspan="5">No bookings found.</td></tr>
             {% endfor %}
           </tbody>
         </table>
-      {% else %}
-        <p>No bookings yet. Ready for your next adventure?</p>
-      {% endif %}
+    </div>
+  </div>
+
+<div class="container mt-4">
+  <div class="row mb-4">  
+    <div class=" col-md-9">
+     
+      <div class= 'row align-items-center'>
+          <div class= 'col-10'> <h5 class="mt-4 dark-accent-text">Notifications</h5> </div>
+          <div class= 'col-2'> <a href="{% url 'clear_all_notifications' %}" class="btn btn-sm btn-danger mb-2 float-end"
+                  onclick="return confirm('Clear all notifications?')">Clear All</a>
+          </div>
+        </div>
+      <ul class="list-group">
+        {% for n in notifications %}
+          <li class="list-group-item d-flex justify-content-between align-items-start {% if not n.is_read %}fw-bold{% endif %}">
+            <div>
+              {{ n.message|safe }}<br>
+              <small class="text-muted">{{ n.created_at|date:"M d, Y H:i" }}</small>
+            </div>
+            <a href="{% url 'delete_notification' n.pk %}" class="btn btn-sm btn-outline-secondary ms-2"
+              onclick="return confirm('Mark this notification as read?')">✓</a>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No new notifications.</li>
+        {% endfor %}
+      </ul>
+
+      <h5 class="mt-4 dark-accent-text">Invoices & Payment History</h5>
+      <table class="table">
+        <thead>
+          <tr><th>Tour</th><th>Amount</th><th>Invoice</th></tr>
+        </thead>
+        <tbody>
+          {% for booking in bookings %}
+            <tr>
+              <td>{{ booking.package }}</td>
+              <td>${{ booking.price }}</td>
+              <td>
+                <a href="{% url 'download_invoice' booking.pk %}" class="btn btn-sm btn-outline-secondary">
+                  Download PDF
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="3">No payment history yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+
+      <h5 class="mt-4 dark-accent-text">Support / Help Desk</h5>
+        <form action="{% url 'submit_support_ticket' %}" method="post">
+          {% csrf_token %}
+          <div class="mb-2">
+            <input type="text" name="subject" class="form-control" placeholder="Subject">
+          </div>
+          <div class="mb-2">
+            <textarea name="message" class="form-control" rows="3" placeholder="How can we help you?"></textarea>
+          </div>
+          <button class="btn btn-outline-success">Send Message</button>
+        </form>
+
+        
+    </div>
+
+    <!-- Update credentials section-->
+    <div class="card col-md-3 mt-2">
+      <h4 class="dark-accent-text mt-2">Edit Profile</h4>
+      <button class="btn btn-outline-success w-100 mb-2" type="button" id="toggleUpdateBtn">
+        Update Personal Info
+      </button>
+      <div class="collapse" id="updateInfo">
+        <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" name="username" value="{{ user.username }}">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" name="email" value="{{ user.email }}">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Nationality</label>
+          <select class="form-select" name="nationality">
+            <option value="">-- Select Country --</option>
+            {% for code, country in countries %}
+              <option value="{{ code }}" {% if user.nationality == code %}selected{% endif %}>{{ country }}</option>
+            {% endfor %}
+          </select>
+
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Profile Picture</label>
+          <input type="file" class="form-control" name="profile_pic">
+        </div>
+        <button type="submit" class="btn btn-success w-100">Save Info</button>
+        </form>
+
+      </div>
+
+      <button class="btn btn-outline-secondary w-100 mt-3 mb-2" type="button" id="togglePasswordBtn">
+        Change Password
+      </button>
+      <div class="collapse mb-2" id="changePassword">
+        <form method="post" action="{% url 'change_password' %}">
+          {% csrf_token %}
+          <input type="password" class="form-control mb-2" name="old_password" placeholder="Old Password" required>
+          <input type="password" class="form-control mb-2" name="new_password" placeholder="New Password" required>
+          <input type="password" class="form-control mb-2" name="confirm_password" placeholder="Confirm New Password" required>
+          <button type="submit" class="btn btn-outline-success w-100">Change Password</button>
+        </form>
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} mt-2">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      
+      <button class="btn btn-danger w-100 mt-4" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+      Delete My Account
+      </button>
+<!-- Modal for account deletion -->
+      <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <form method="post" action="{% url 'delete_account' %}">
+          {% csrf_token %}
+            <div class="modal-content">
+              <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteAccountModalLabel">Delete Account</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              <p>This action <strong>cannot be undone</strong>. Please enter your password to confirm.</p>
+              <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-danger">Confirm Deletion</button>
+            </div>
+          </div>
+    </form>
+  </div>
     </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const updateBtn = document.getElementById('toggleUpdateBtn');
+  const updateInfo = document.getElementById('updateInfo');
+
+  const updateCollapse = new bootstrap.Collapse(updateInfo, { toggle: false });
+
+  updateInfo.addEventListener('show.bs.collapse', () => {
+    updateBtn.innerText = 'Hide Update Form';
+  });
+  updateInfo.addEventListener('hide.bs.collapse', () => {
+    updateBtn.innerText = 'Update Personal Info';
+  });
+
+  updateBtn.addEventListener('click', () => {
+    updateCollapse.toggle();
+  });
+
+
+  const passwordBtn = document.getElementById('togglePasswordBtn');
+  const changePassword = document.getElementById('changePassword');
+
+  const passwordCollapse = new bootstrap.Collapse(changePassword, { toggle: false });
+
+  changePassword.addEventListener('show.bs.collapse', () => {
+    passwordBtn.innerText = 'Hide Password Form';
+  });
+  changePassword.addEventListener('hide.bs.collapse', () => {
+    passwordBtn.innerText = 'Change Password';
+  });
+
+  passwordBtn.addEventListener('click', () => {
+    passwordCollapse.toggle();
+  });
+</script>
+    <footer class="bg-abstract text-white"  >
+      <div class="container py-4 overlay-text">
+        <div class="row">
+          <div class="col-md-3 mt-4" style="margin-left: 3%;">
+                <img src="{% static 'images/logo-removebg.png' %}" alt="tausitoursandtravels logo" class="img-fluid" style="max-width: 120px; height: auto;">
+                <h3 style="font-family:'Outfit', sans-serif; text-shadow: 2px 2px 6px rgba(0,0,0,0.45);">Beyond Travel — A Signature Experience.</h3>
+            </div>
+          <div class="col-md-4">
+            <h5>Quick Links</h5>
+            <ul class="list-unstyled">
+              <li><a href="{% url 'homepage' %}" class="text-white text-decoration-none">Home</a></li>
+              <li><a href="{% url 'packages' %}" class="text-white text-decoration-none">Packages</a></li>
+              <li><a href="{% url 'about' %}" class="text-white text-decoration-none">About</a></li>
+              <li><a href="{% url 'contact' %}" class="text-white text-decoration-none">Contact</a></li>
+            </ul>
+            <h5>Our Partners</h5>
+            <ul class="list-unstyled">
+              <li><a href="https://langatvic.github.io/HospitalProject/" class="text-white text-decoration-none" target =" _blank"><strong>Medicare</strong></a></li>
+              <li><a href="https://open.spotify.com/" class="text-white text-decoration-none" target =" _blank"><strong>Spotify Music</strong></a></li>
+              <li><a href="https://www.dhl.com/us-en/home.html" class="text-white text-decoration-none" target =" _blank"><strong>DHL logistics</strong></a></li>
+              <li><a href="https://auto-xpress.co.ke/" class="text-white text-decoration-none" target =" _blank"><strong>Auto-xpress</strong> </a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5>Contact Us</h5>
+            <p>Email: info@tausi.co.ke</p>
+            <p>Phone: +254 712 345678</p>
+            <div>
+              <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="text-white"><i class="bi bi-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        <hr class="border-white">
+        <p class="text-center mb-0">© {{ year }} Tausi Travels and Tours. All rights reserved.</p>
+      </div>
+    </footer>
+</body>
+</html>

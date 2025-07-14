@@ -5,5 +5,4 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
     path('logout/', tausi_logout_view, name='logout'),
-    path('dashboard/', dashboard_view, name='dashboard'),
 ]

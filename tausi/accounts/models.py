@@ -254,13 +254,14 @@ COUNTRIES = [
 ]
 
 class CustomUser(AbstractUser):
+    second_name = models.CharField(max_length=100, blank=True, null=True)
     nationality = models.CharField(
         max_length=100,
         choices=COUNTRIES,
         blank=True,
         null=True
     )
-    profile_pic = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='profiles/', blank=True, null=True, default= 'default.png')
 
     def __str__(self):
         return self.username

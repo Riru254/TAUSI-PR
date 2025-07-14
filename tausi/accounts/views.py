@@ -52,7 +52,7 @@ def register_view(request):
 def dashboard_view(request):
     user = request.user
     bookings = Booking.objects.filter(user=user)
-    return render(request, 'accounts/dashboard.html', {
+    return render(request, 'dashboard.html', {
         'user': user,
         'bookings': bookings,
     })

@@ -11,7 +11,6 @@ class LoginForm(forms.Form):
         'placeholder': 'Enter your password'
     }))
 
-
 class CustomRegisterForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
@@ -24,11 +23,14 @@ class CustomRegisterForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'nationality', 'profile_pic', 'password']
+        fields = ['username','first_name', 'second_name', 'last_name', 'email', 'nationality', 'profile_pic', 'password']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'second_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'nationality': forms.TextInput(attrs={'class': 'form-control'}),
+            'nationality': forms.Select(attrs={'class': 'form-control'}),
             'profile_pic': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
@@ -38,3 +40,4 @@ class CustomRegisterForm(forms.ModelForm):
         confirm = cleaned_data.get('confirm_password')
         if password != confirm:
             self.add_error('confirm_password', "Passwords must match.")
+
