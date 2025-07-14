@@ -1,2 +1,0 @@
-pip install gunicorn dj-database-url psycopg2-binary whitenoise
-pip freeze > requirements.txt
