@@ -1,0 +1,19 @@
+/* Example: Change header and button colors */
+#header, .module caption {
+    background-color: #082b10 !important; /* Tausi green */
+}
+
+a {
+    color: #28a745 !important;
+}
+
+.button, input[type="submit"] {
+    background-color: #20c997 !important;
+    border-color: #000000 !important;
+    color: white !important;
+}
+
+.button:hover {
+    background-color: #425c48 !important;
+    border-color: #1e7e34 !important;
+}

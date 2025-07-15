@@ -5,26 +5,37 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import check_password
-from .forms import BookingForm, BlogPostForm, CustomUserUpdateForm
-from .models import BlogPost
+from .forms import BookingForm, BlogPostForm, CustomUserUpdateForm, CommentForm, InquiryForm
+from .models import BlogPost, Comment
 from accounts.models import COUNTRIES
 from django.contrib.auth.decorators import login_required
-from mainapp.models import Booking, Notification, SupportTicket
-from datetime import date
+from django.views.decorators.http import require_POST
+from mainapp.models import Booking, Notification, SupportTicket, Invoice
+from datetime import date, timedelta
 from urllib.parse import urlencode
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-
+from django.core.paginator import Paginator
 
 # Create your views here.
 def homepage(request):
-    return render(request, 'homepage.html')
+    blogs = BlogPost.objects.all().order_by('-created_at')[:3]
+    return render(request, 'homepage.html',{'blogs': blogs})
 
 def about(request):
     return render(request, 'about.html')
 
 def contact(request):
-    return render(request, 'contact.html')
+    if request.method == 'POST':
+        form = InquiryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your message was sent successfully!")
+            return redirect('contact')  # Replace 'contact' with your URL name if different
+    else:
+        form = InquiryForm()
+    
+    return render(request, 'contact.html', {'form': form})
 
 def packages(request):
     return render(request, 'packages.html')
@@ -38,12 +49,22 @@ def welcome(request):
 
 def register(request):
     return render(request, 'register.html')
+from django.core.paginator import Paginator
 
-def homepage_view(request):
+def blog_list_view(request):
+    blogs = BlogPost.objects.all().order_by('-created_at')
+    paginator = Paginator(blogs, 2)  # 6 blogs per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'blog.html', {'page_obj': page_obj,
+                                         'blogs': blogs})
+
+#def homepage_view(request):
     return render(request, 'homepage.html')
 
 
 form = BookingForm()
+@login_required
 def booking_view(request):
     if request.method == 'POST':
         form = BookingForm(request.POST)
@@ -64,21 +85,10 @@ def booking_view(request):
         form = BookingForm()
     return render(request, 'booking.html', {'form': form})
 
-@login_required
-def create_blog_post(request):
-    if request.method == 'POST':
-        form = BlogPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            blog = form.save(commit=False)
-            blog.author = request.user
-            blog.save()
-            return redirect('blog_list')
-    else:
-        form = BlogPostForm()
-    return render(request, 'create_blog_post.html', {'form': form})
 
 @login_required
 def dashboard_view(request):
+    blogs = BlogPost.objects.filter(author=request.user).order_by('-created_at')[:3]
     user = request.user
     if request.method == 'POST':
         form = CustomUserUpdateForm(request.POST, request.FILES, instance=user)
@@ -101,9 +111,9 @@ def dashboard_view(request):
         'bookings': bookings,
         'upcoming': upcoming,
         'notifications': notifications,
-        'countries': COUNTRIES
+        'countries': COUNTRIES,
+        "blogs": blogs
     })
-
 
 # Map package name to modal ID
 PACKAGE_TO_MODAL = {
@@ -164,27 +174,36 @@ def delete_notification(request, pk):
     notification = get_object_or_404(Notification, pk=pk, user=request.user)
     notification.delete()
     return redirect('dashboard')
+
 @login_required
 def clear_all_notifications(request):
     Notification.objects.filter(user=request.user).delete()
     return redirect('dashboard')
 
 @login_required
-def download_invoice(request, pk):
+def generate_invoice(request, pk):
     booking = get_object_or_404(Booking, pk=pk, user=request.user)
-    template_path = 'invoice.html'
-    context = {'booking': booking}
+    def calculate_amount(booking):
+        package_prices = {
+            'Luxury Safari': 22500,
+            'Coastal Retreat': 17500,
+            'Mount Kenya Trek': 12500,
+            'Nairobi City Experience': 7500,
+            'Amboseli Adventure': 35000,
+        }
+        return package_prices.get(booking.package, 1000)
+    # If invoice already exists
+    if hasattr(booking, 'invoice'):
+        invoice = booking.invoice
+    else:
+        # Create new invoice
+        invoice = Invoice.objects.create(
+            booking=booking,
+            due_date=date.today() + timedelta(days=7),
+            amount=calculate_amount(booking),  # You define this logic
+        )
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="invoice_{booking.pk}.pdf"'
-
-    template = get_template(template_path)
-    html = template.render(context)
-
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse('Error generating invoice PDF', status=500)
-    return response
+    return render(request, 'invoices/invoice_detail.html', {'invoice': invoice})
 
 @login_required
 def update_profile_view(request):
@@ -230,7 +249,6 @@ def change_password(request):
 
     return redirect('dashboard')
 
-
 @login_required
 def delete_account(request):
     if request.method == 'POST':
@@ -248,3 +266,84 @@ def delete_account(request):
 
     return redirect('dashboard')
 
+@login_required
+def add_blog(request):
+    form = BlogPostForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        blog = form.save(commit=False)
+        blog.author = request.user
+        blog.save()
+        return redirect('add_blog')  
+    return render(request, 'blogs/add_blog.html', {'form': form})
+
+@login_required
+@require_POST
+def toggle_like(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id)
+    user = request.user
+    liked = False
+
+    if user in post.likes.all():
+        post.likes.remove(user)
+    else:
+        post.likes.add(user)
+        liked = True
+
+    return JsonResponse({
+        'liked': liked,
+        'like_count': post.likes.count(),
+    })
+
+@login_required
+def add_comment(request, post_id):
+    if request.method == "POST":
+        blog = get_object_or_404(BlogPost, id=post_id)
+        content = request.POST.get("comment")
+        if content:
+            Comment.objects.create(blog=blog, author=request.user, content=content)
+            messages.success(request, "Comment added successfully.")
+        else:
+            messages.warning(request, "Comment cannot be empty.")
+    return redirect('blog_detail', post_id=post_id)
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if comment.author == request.user:
+        comment.delete()
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+def blog_detail(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id)
+    comments = post.comments.all().order_by('-created_at')
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.post = post
+            comment.save()
+            return redirect('blog_detail', post_id=post.id)
+    else:
+        form = CommentForm()
+
+    return render(request, 'blogs/blog_detail.html', {
+        'post': post,
+        'comments': comments,
+        'form': form
+    })
+
+@login_required
+def user_blogs(request):
+    user_posts = BlogPost.objects.filter(author=request.user).order_by('-created_at')
+    paginator = Paginator(user_posts, 3) # Second argument- x blogs per page
+    page_number = request.GET.get('page') # Very important
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'blogs/user_blogs.html', {'page_obj': page_obj})
+
+@login_required
+def delete_blog(request, post_id):
+    blog = get_object_or_404(BlogPost, id=post_id, author=request.user)
+    blog.delete()
+    return redirect('user_blogs')

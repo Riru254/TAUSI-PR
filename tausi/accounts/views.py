@@ -26,9 +26,15 @@ def login_view(request):
                 if user.check_password(password):
                     login(request, user)
                     messages.success(request, f"Welcome back, {user.username}!")
+                    
+                    # ✅ Redirect staff users to Django admin
+                    if user.is_staff:
+                        return redirect('/admin/')
+                    
+                    # Regular users
                     return redirect('homepage')
                 else:
-                    messages.error(request, "Incorrect password.")  # ✅ only shows on bad login
+                    messages.error(request, "Incorrect password.")
             except CustomUser.DoesNotExist:
                 messages.error(request, "No account found with that email.")
         else:

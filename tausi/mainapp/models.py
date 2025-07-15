@@ -30,12 +30,28 @@ class Booking(models.Model):
     def __str__(self):
         return f"{self.name} - {self.package}"
 
+
+class Invoice(models.Model):
+    booking = models.OneToOneField('Booking', on_delete=models.CASCADE, related_name='invoice')
+    issued_date = models.DateField(auto_now_add=True)
+    due_date = models.DateField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    is_paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Invoice #{self.id} for {self.booking.name}"
+    
+
 class BlogPost(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     content = models.TextField()
     image = models.ImageField(upload_to='blog_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_blogs', blank=True)
+
+    def total_likes(self):
+        return self.likes.count()
     def __str__(self):
         return f"{self.title} by {self.author.username}"
     
@@ -65,3 +81,19 @@ class CustomUserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'nationality', 'profile_pic']
+
+class Comment(models.Model):
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Inquiry(models.Model):
+    fullname = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject= models.CharField(max_length= 25)
+    message = models.TextField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Inquiry about {self.subject}"

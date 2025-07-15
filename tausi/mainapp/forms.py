@@ -1,5 +1,5 @@
 from django import forms
-from .models import Booking, BlogPost
+from .models import Booking, BlogPost, Comment, Inquiry
 from accounts.models import CustomUser
 
 PACKAGE_CHOICES = [
@@ -15,9 +15,8 @@ PACKAGE_CHOICES = [
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = ['name', 'email', 'phone', 'package', 'travel_date', 'notes']
+        fields = [ 'email', 'phone', 'package', 'travel_date', 'notes']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'package': forms.Select(attrs={'class': 'form-select'}),
@@ -39,3 +38,19 @@ class CustomUserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'nationality', 'profile_pic']
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+class InquiryForm(forms.ModelForm):
+    class Meta:
+        model = Inquiry
+        fields = ['fullname', 'email', 'subject', 'message']
+        widgets = {
+            'fullname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'John Doe'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'johndoe@gmail.com'}),
+            'subject': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Subject'}),
+            'message': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Message'}),
+        }

@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog -  Tausi</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="icon" href="{% static 'images/logo-removebg.ico' %}" type="image/ico">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+      html, body {
+        height: auto;
+        overflow-x: hidden;
+      scroll-behavior: smooth;
+      }
+
+        .bg-abstract {
+        background: url("{% static 'images/contactwallpaper.png' %}") no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed; /* optional parallax-like */
+        }
+        .overlay-content {
+        position: relative;
+        z-index: 1;
+        color: white;
+        text-align: center;
+        font-size: 2rem;
+        backdrop-filter: blur(2px);
+            }
+            .overlay-text {
+        position: relative;
+        z-index: 1;
+        color: rgb(10, 74, 48);
+        text-align: center;
+        font-size: 1rem;
+        backdrop-filter: blur(7px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'homepage' %}">
+              <img src="{% static 'images/logo-removebg.png' %}" alt="Logo" width = "40">  Tausi Tours and Travels  
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav ms-auto">
+                  <li class="nav-item">
+                      <a class="nav-link " href="{% url 'homepage' %}">Home</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'about' %}">About</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'packages' %}">Services</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link " href="{% url 'contact' %}">Contact</a>
+                  </li>
+                  {% if user.is_authenticated %}
+                        <a class="nav-link active" href="{% url 'dashboard' %}">Dashboard</a>
+                  {% endif %}
+              </ul>
+          </div>
+      </div>
+    </nav>
+
+<div class="container py-5">
+  <div class="card shadow-sm border-0">
+    {% if post.image %}
+      <img src="{{ post.image.url }}" class="img-fluid rounded mb-3" alt="{{ post.title }}" style="max-height: 400px; object-fit: cover; width: 100%;">
+    {% endif %}
+    <div class="card-body">
+      <h2 class="card-title text-success">{{ post.title }}</h2>
+      <p class="text-muted mb-1">by <strong>{{ post.author.username }}</strong></p>
+      <p class="text-muted">{{ post.created_at|date:"M d, Y" }}</p>
+      <hr>
+      <p class="card-text">{{ post.content|linebreaks }}</p>
+
+      <!-- Like Button -->
+      <form method="POST" action="{% url 'toggle_like' post.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-primary mt-3">
+          ❤️ {{ post.likes.count }}
+          {% if user in post.likes.all %}(You liked){% endif %}
+        </button>
+      </form>
+          
+
+<!-- Toggle Comment Section -->
+<button class="btn btn-sm btn-outline-secondary mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#commentSection" aria-expanded="false">
+  💬 View Comments ({{ comments.count }})
+</button>
+
+<!-- Comments Section -->
+<div class="collapse mt-3" id="commentSection">
+  {% for comment in comments %}
+    <div class="border rounded p-2 mb-2">
+      <small><strong>{{ comment.author.username }}</strong> — {{ comment.created_at|timesince }} ago</small>
+      <p class="mb-1">{{ comment.content|linebreaks }}</p>
+
+      {% if comment.author == user %}
+        <form method="POST" action="{% url 'delete_comment' comment.id %}">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-outline-danger btn-sm">Delete</button>
+        </form>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p class="text-muted">No comments yet. Be the first to comment!</p>
+  {% endfor %}
+
+  <!-- Add Comment Button -->
+  {% if user.is_authenticated %}
+    <button id="showCommentFormBtn" class="btn btn-sm btn-outline-success mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#addCommentForm" aria-expanded="false">
+      ➕ Add a comment
+    </button>
+
+    <!-- Collapsible Form -->
+    <div class="collapse mt-2" id="addCommentForm">
+      <form method="POST" id="commentForm">
+        {% csrf_token %}
+        <div class="form-group">
+          <textarea name="content" class="form-control autosize-textarea" rows="1" placeholder="Write your comment..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-success btn-sm mt-2">Post</button>
+      </form>
+    </div>
+  {% else %}
+    <p class="text-muted mt-3">You must <a href="{% url 'login' %}">log in</a> to comment.</p>
+  {% endif %}
+</div>
+<div>
+  <a href="{% url 'homepage' %}" class="btn btn-outline-secondary mt-4">← Back to Home</a>
+</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auto-expand textarea
+  document.addEventListener('input', function (e) {
+    if (e.target.tagName.toLowerCase() === 'textarea' && e.target.classList.contains('autosize-textarea')) {
+      e.target.style.height = 'auto';
+      e.target.style.height = (e.target.scrollHeight) + 'px';
+    }
+  });
+
+  // Scroll to form when 'Add Comment' button is clicked
+  document.getElementById('showCommentFormBtn')?.addEventListener('click', function () {
+    setTimeout(() => {
+      const form = document.getElementById('addCommentForm');
+      if (form) {
+        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 300); // slight delay to wait for collapse animation
+  });
+</script>
+
+
+</body>
+</html>

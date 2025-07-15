@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Booking, Notification, SupportTicket
+from .models import Booking,Inquiry, Notification, SupportTicket, BlogPost
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
@@ -18,3 +18,5 @@ class SupportTicketAdmin(admin.ModelAdmin):
     list_filter = ('status',)
     search_fields = ('subject', 'message', 'user__username')
 
+admin.site.register(Inquiry)
+admin.site.register(BlogPost)

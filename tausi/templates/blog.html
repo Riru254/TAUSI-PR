@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Blogs</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="icon" href="{% static 'images/logo-removebg.ico' %}" type="image/ico">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        :root {
+        --accent: #28a745;
+        --dark-accent: rgb(10, 74, 48);
+        --gray: #6c757d;
+    }
+    .pagination .page-link {
+      color: var(--accent); /* main brand color */
+      border: 1px solid var(--accent);
+    }
+    .pagination .page-item.active .page-link {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    .pagination .page-link:hover {
+      background-color: rgba(40, 167, 69, 0.1);
+    }
+    </style>
+
+</head>
+<body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'homepage' %}">
+              <img src="{% static 'images/logo-removebg.png' %}" alt="Logo" width = "40">  Tausi Tours and Travels  
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav ms-auto">
+                  <li class="nav-item">
+                      <a class="nav-link " href="{% url 'homepage' %}">Home</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link active" href="{% url 'about' %}">About</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'packages' %}">Services</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link " href="{% url 'contact' %}">Contact</a>
+                  </li>
+                  {% if user.is_authenticated %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                      </li>
+                  {% endif %}
+              </ul>
+              <div class="d-flex align-items-center ms-3 m-3">
+                    <!-- Auth badge -->
+                    <span class="badge rounded-pill"
+                            style="cursor: pointer; background-color: {% if user.is_authenticated %}#20c997{% else %}gray{% endif %};"
+                            data-bs-toggle="modal"
+                            data-bs-target="#authModal">
+                            <i class="bi bi-person-fill"></i>
+                    {% if user.is_authenticated %}
+                        {{ user.username }}
+                    {% else %}
+                        Guest
+                    {% endif %}
+                    </span>
+                  </div>
+          </div>
+      </div>
+    </nav>
+
+<div class="container py-5">
+  <h2 class="text-center mb-5" style="color: #28a745;">Latest from the User's Blog</h2>
+  <div class="row justify-content-center">
+    <div class="mb-3 mt-2">
+    <a href="{% url 'add_blog' %}" class="btn btn-success">
+    ➕ Add Post
+    </a>
+    </div>
+    {% for blog in blogs %}
+      <div class="col-md-8 mb-4">
+        <div class="card shadow-sm border-0">
+          {% if blog.image %}
+            <img src="{{ blog.image.url }}" class="card-img-top rounded-top" alt="{{ blog.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title text-dark">{{ blog.title }}</h5>
+            <p class="card-text text-muted">{{ blog.content|truncatewords:40 }}</p>
+            
+            <!-- Like button -->
+            {% if user.is_authenticated %}
+              <form method="POST" action="{% url 'toggle_like' blog.id %}">
+                {% csrf_token %}
+                <div class='row'>
+                    <div>
+                        <button type="submit" class="btn btn-sm {% if user in blog.likes.all %}btn-success{% else %}btn-outline-success{% endif %}">
+                        ❤️ {{ blog.likes.count }} {% if user in blog.likes.all %}(You liked){% endif %}
+                        </button>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#comments{{ blog.id }}">
+                        💬 Comments
+                        </button>
+                    </div>
+                </div>
+              </form>
+            {% else %}
+              <a href="{% url 'login' %}" class="btn btn-sm btn-outline-secondary">Log in to like</a>
+            {% endif %}
+          
+            <div class="collapse mt-2" id="comments{{ blog.id }}">
+              {% for comment in blog.comments.all %}
+                <div class="border rounded p-2 mb-1">
+                  <strong>{{ comment.author.username }}</strong>: {{ comment.content }}
+                </div>
+              {% empty %}
+                <p class="text-muted">No comments yet.</p>
+              {% endfor %}
+            
+              {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'add_comment' blog.id %}">
+                  {% csrf_token %}
+                  <textarea name="comment" class="form-control mb-2" rows="2" placeholder="Add a comment..."></textarea>
+                  <button class="btn btn-sm btn-outline-success">Post</button>
+                </form>
+              {% endif %}
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="text-secondary">by <strong>{{ blog.author.username }}</strong></small>
+              <small class="text-secondary">{{ blog.created_at|date:"M d, Y" }}</small>
+            </div>
+          </div>
+        </div>
+        <a href="{% url 'blog_detail' blog.id %}" class="btn btn-sm btn-outline-dark mt-2">Read More</a>
+
+      </div>
+    {% empty %}
+      <p class="text-muted text-center">No blog posts yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+  <!-- Pagination -->
+<nav aria-label="Blog pagination">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1">« First</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹ Prev</a>
+      </li>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+      {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next ›</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last »</a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+
+
+</body>
+</html>

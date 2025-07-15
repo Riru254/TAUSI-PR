@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% load static%}
+{% block title %}Tausi Admin{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/admin_custom.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <h1 id="site-name">
+    <img src="{% static 'images/logo-removebg.png' %}" alt="Logo" height="40">
+    <a href="{% url 'admin:index' %}" style="color: #28a745;">Tausi Admin</a>
+  </h1>
+{% endblock %}
+
+{% block nav-global %}
+  <!-- Optional: add a link to homepage or support -->
+  <a href="{% url 'homepage' %}" class="button">← Back to Site</a>
+{% endblock %}
